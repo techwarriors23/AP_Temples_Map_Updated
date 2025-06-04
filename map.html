@@ -1,0 +1,1395 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_8e4ab7573660126030961b4a59332777 {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0vh;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
+
+            <style>html, body {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            </style>
+
+            <style>#map {
+                position:absolute;
+                top:0;
+                bottom:0;
+                right:0;
+                left:0;
+                }
+            </style>
+
+            <script>
+                L_NO_TOUCH = false;
+                L_DISABLE_3D = false;
+            </script>
+
+        
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.1.0/leaflet.markercluster.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.1.0/MarkerCluster.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.1.0/MarkerCluster.Default.css"/>
+</head>
+<body>
+    
+    
+    <div id="details-popup" style="
+        position: fixed;
+        top: 50px;
+        right: 20px;
+        width: 320px;
+        max-height: 70vh;
+        overflow-y: auto;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+        padding: 15px;
+        display: none;
+        z-index: 10000;
+        font-family: Arial, sans-serif;
+    ">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <button onclick="window.speechSynthesis.cancel(); document.getElementById('details-popup').style.display='none';" 
+                style="border: none; background: transparent; font-size: 20px; cursor: pointer;">&times;</button>
+            <button id="listen-button" onclick="listenDetails()" 
+                style="border: none; background: none; font-size: 16px; cursor: pointer;">🔊 Listen</button>
+        </div>
+        <div id="details-content" style="margin-top: 10px;"></div>
+    </div>
+
+    <script>
+        const templeDetails = {'Shrine': {'html': '\n            <h4>Shrine</h4>\n            <p><b>City:</b> Penumallam</p>\n            <p><b>State:</b> Andhra Pradesh</p>\n            <p><b>Country:</b> India</p>\n            <p>The Padmanabhaswamy Temple (Malayalam: [pɐd̪mɐnaːbʰɐswaːmi]) is a Hindu temple dedicated to Vishnu in Thiruvananthapuram, the capital of the state of Kerala, India. ... He performed poojas at the Thevarappura in the Temple and front of the Vedavyasa Shrine. Despite opposition from the Royal Family and the tantric priests of the Temple ...</p>\n            <img src="https://www.entertales.com/wp-content/uploads/temple.jpg" style="width:100%; margin-bottom:5px;"><img src="https://c8.alamy.com/comp/FA46XA/shrine-at-hindu-temple-during-diwali-FA46XA.jpg" style="width:100%; margin-bottom:5px;">\n            <a href="https://www.google.com/maps/search/?api=1&query=Shrine%20Penumallam%20temple" target="_blank">Google Maps</a>\n        ', 'speech': 'Shrine. Located in Penumallam, Andhra Pradesh, India. The Padmanabhaswamy Temple (Malayalam: [pɐd̪mɐnaːbʰɐswaːmi]) is a Hindu temple dedicated to Vishnu in Thiruvananthapuram, the capital of the state of Kerala, India. ... He performed poojas at the Thevarappura in the Temple and front of the Vedavyasa Shrine. Despite opposition from the Royal Family and the tantric priests of the Temple ...'}, 'Sringeri Math': {'html': '\n            <h4>Sringeri Math</h4>\n            <p><b>City:</b> Tirumala</p>\n            <p><b>State:</b> Andhra Pradesh</p>\n            <p><b>Country:</b> India</p>\n            <p>The Vijayanagara rulers repaired and built numerous more Hindu and Jain temples in and around the Sringeri matha and elsewhere in their empire. This is a period where numerous inscriptions help establish the existence of the Sringeri peetham from the 14th century onwards</p>\n            <img src="https://www.indica.today/wp-content/uploads/2021/09/Vidyashankara_Temple_at_Shringeri.jpg" style="width:100%; margin-bottom:5px;"><img src="http://www.myoksha.com/wp-content/uploads/2014/08/Sringeri-Temple-Image.jpg" style="width:100%; margin-bottom:5px;">\n            <a href="https://www.google.com/maps/search/?api=1&query=Sringeri%20Math%20Tirumala%20temple" target="_blank">Google Maps</a>\n        ', 'speech': 'Sringeri Math. Located in Tirumala, Andhra Pradesh, India. The Vijayanagara rulers repaired and built numerous more Hindu and Jain temples in and around the Sringeri matha and elsewhere in their empire. This is a period where numerous inscriptions help establish the existence of the Sringeri peetham from the 14th century onwards'}, 'Kasi math': {'html': '\n            <h4>Kasi math</h4>\n            <p><b>City:</b> Tirumala</p>\n            <p><b>State:</b> Andhra Pradesh</p>\n            <p><b>Country:</b> India</p>\n            <p>Sree Tirumala Kashi Math is a hindu temple, located at Tirumala - Tirupati Road, Near, Udupi Mutt, Tirumala, Tirupati, Andhra Pradesh 517504, India. They can be contacted via phone at +91 877 227 7316, visit their website www.kashimath.org for more detailed information.</p>\n            <img src="https://lh3.googleusercontent.com/p/AF1QipMldFT6TAWUeM7L-BJqpnonWHyXXa8gJhKa5byu=s1600-w400" style="width:100%; margin-bottom:5px;"><img src="https://lh3.googleusercontent.com/p/AF1QipPI4tcfS9XnvsL_RRcdO4DJl1euubcADGta7w8S=s1600-w400" style="width:100%; margin-bottom:5px;">\n            <a href="https://www.google.com/maps/search/?api=1&query=Kasi%20math%20Tirumala%20temple" target="_blank">Google Maps</a>\n        ', 'speech': 'Kasi math. Located in Tirumala, Andhra Pradesh, India. Sree Tirumala Kashi Math is a hindu temple, located at Tirumala - Tirupati Road, Near, Udupi Mutt, Tirumala, Tirupati, Andhra Pradesh 517504, India. They can be contacted via phone at +91 877 227 7316, visit their website www.kashimath.org for more detailed information.'}, 'Udipi Krishna Math': {'html': '\n            <h4>Udipi Krishna Math</h4>\n            <p><b>City:</b> Tirumala</p>\n            <p><b>State:</b> Andhra Pradesh</p>\n            <p><b>Country:</b> India</p>\n            <p>Udupi Shri Krishna Temple is a well-known historic Hindu temple dedicated to Krishna and Dvaita Matha located in the city of Udupi in Karnataka, India.The Matha area resembles a living Aashram, a holy place for daily devotion and living.Surrounding the Shri Krishna Temple are several temples namely the Udupi Anantheshwara Temple which is over a thousand years old.</p>\n            <img src="https://imvoyager.com/wp-content/uploads/2021/04/DSC_0197-640x933.jpg" style="width:100%; margin-bottom:5px;"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhdJ3gZhOc3UoQ3qbOeoS8YamQ8z1QFwccE3dBB_SxeTQ4qVsAxfPTdrKrdFBlMBAArP088yN7FmLsTZLHZ2_S8ek5FQFnJfPpDqUd5pY4BWYlBvpKRRL-_-kzAxQqMiThmvSupyzD-6aM/s1600/Sri-Krishna-Matha-Udupi.jpg" style="width:100%; margin-bottom:5px;">\n            <a href="https://www.google.com/maps/search/?api=1&query=Udipi%20Krishna%20Math%20Tirumala%20temple" target="_blank">Google Maps</a>\n        ', 'speech': 'Udipi Krishna Math. Located in Tirumala, Andhra Pradesh, India. Udupi Shri Krishna Temple is a well-known historic Hindu temple dedicated to Krishna and Dvaita Matha located in the city of Udupi in Karnataka, India.The Matha area resembles a living Aashram, a holy place for daily devotion and living.Surrounding the Shri Krishna Temple are several temples namely the Udupi Anantheshwara Temple which is over a thousand years old.'}, 'Jeeyar Math': {'html': '\n            <h4>Jeeyar Math</h4>\n            <p><b>City:</b> Tirumala</p>\n            <p><b>State:</b> Andhra Pradesh</p>\n            <p><b>Country:</b> India</p>\n            <p>Jeeyar Math Jeeyar Math is a Hindu temple in Tirupati Urban, Tirupati district, Andhra Pradesh. Jeeyar Math is situated nearby to the Hindu temple Udipi Krishna Math, as well as near Kanchi Kamakoti Math. Overview: Map: ... Tirumala or Tirumalai is a Hindu religious temple town ...</p>\n            <img src="https://news.tirumala.org/wp-content/uploads/2017/12/vanamamalai-mutt-swamy-5.jpg" style="width:100%; margin-bottom:5px;"><img src="https://news.tirumala.org/wp-content/uploads/2017/12/vanamamalai-mutt-swamy-3.jpg" style="width:100%; margin-bottom:5px;">\n            <a href="https://www.google.com/maps/search/?api=1&query=Jeeyar%20Math%20Tirumala%20temple" target="_blank">Google Maps</a>\n        ', 'speech': 'Jeeyar Math. Located in Tirumala, Andhra Pradesh, India. Jeeyar Math Jeeyar Math is a Hindu temple in Tirupati Urban, Tirupati district, Andhra Pradesh. Jeeyar Math is situated nearby to the Hindu temple Udipi Krishna Math, as well as near Kanchi Kamakoti Math. Overview: Map: ... Tirumala or Tirumalai is a Hindu religious temple town ...'}, 'Kanchi Kamakoti Math': {'html': '\n            <h4>Kanchi Kamakoti Math</h4>\n            <p><b>City:</b> Tirumala</p>\n            <p><b>State:</b> Andhra Pradesh</p>\n            <p><b>Country:</b> India</p>\n            <p>Sri Kanchi Kamakoti Sankara Math- Saraswati Mandir Main Road, Karol Rambhan, Jammu-Srinagar National Highway, Baramullah, Doda District, Jammu & Kashmir - 192 144. ... Sri Kanchi Kamakoti Peetam-Sri Sita Ramaswamy Temple Sita Vilas Road, Mysore - 570024 : Karnataka: Tel: 0821-2423748/2513314: Details: ... Tirumala: Sri Kanchi Kamakoti Sankara ...</p>\n            <img src="http://casualwalker.com/wp-content/uploads/2020/10/sankara_mutt_kanchipuram2-1024x683.jpg" style="width:100%; margin-bottom:5px;"><img src="https://casualwalker.com/wp-content/uploads/2020/10/sankara_mutt_kanchipuram.jpg" style="width:100%; margin-bottom:5px;">\n            <a href="https://www.google.com/maps/search/?api=1&query=Kanchi%20Kamakoti%20Math%20Tirumala%20temple" target="_blank">Google Maps</a>\n        ', 'speech': 'Kanchi Kamakoti Math. Located in Tirumala, Andhra Pradesh, India. Sri Kanchi Kamakoti Sankara Math- Saraswati Mandir Main Road, Karol Rambhan, Jammu-Srinagar National Highway, Baramullah, Doda District, Jammu & Kashmir - 192 144. ... Sri Kanchi Kamakoti Peetam-Sri Sita Ramaswamy Temple Sita Vilas Road, Mysore - 570024 : Karnataka: Tel: 0821-2423748/2513314: Details: ... Tirumala: Sri Kanchi Kamakoti Sankara ...'}, 'Ahobila Math': {'html': '\n            <h4>Ahobila Math</h4>\n            <p><b>City:</b> Tirumala</p>\n            <p><b>State:</b> Andhra Pradesh</p>\n            <p><b>Country:</b> India</p>\n            <p>Ahobilam Temple Ahobilam (Ahobalam) is the place where Supreme Personality of Godhead incarnated Himself as Lord Nrsimhadeva to killed the demon Hiranyakasipu and save His dear-most devotee Prahlada. Here at Ahobilam Temple, Lord Nrsimhadeva emerged from the pillar of Hiranyakasipu\'s palace, killed him after a fierce fight, simultaneously honouring the boons that Hiranyakasipu received from ...</p>\n            <img src="https://news.tirumala.org/wp-content/uploads/2020/03/HH-SRIVAN-SATAKOPA-SRI-RANGANATHA-SWAMIJI-03.jpg" style="width:100%; margin-bottom:5px;"><img src="https://news.tirumala.org/wp-content/uploads/2015/03/46TH-JEER-OF-AHOBILA-MUTT4-copy.jpg" style="width:100%; margin-bottom:5px;">\n            <a href="https://www.google.com/maps/search/?api=1&query=Ahobila%20Math%20Tirumala%20temple" target="_blank">Google Maps</a>\n        ', 'speech': "Ahobila Math. Located in Tirumala, Andhra Pradesh, India. Ahobilam Temple Ahobilam (Ahobalam) is the place where Supreme Personality of Godhead incarnated Himself as Lord Nrsimhadeva to killed the demon Hiranyakasipu and save His dear-most devotee Prahlada. Here at Ahobilam Temple, Lord Nrsimhadeva emerged from the pillar of Hiranyakasipu's palace, killed him after a fierce fight, simultaneously honouring the boons that Hiranyakasipu received from ..."}, 'Raghavendra Swamy Math': {'html': '\n            <h4>Raghavendra Swamy Math</h4>\n            <p><b>City:</b> Tirumala</p>\n            <p><b>State:</b> Andhra Pradesh</p>\n            <p><b>Country:</b> India</p>\n            <p>Sri Raghavendra Swamy Mutt is a hindu temple, located at RE Mada St, Nehru Nagar, Tirupati, Andhra Pradesh 517501, India. They can be contacted via phone at +91 877 222 9036, visit their website www.srsmatha.org for more detailed information. ... Sree Tirumala Kashi Math.</p>\n            <img src="https://news.tirumala.org/wp-content/uploads/2021/12/PONTIFF-OF-SRI-RAGHAVENDRA-SWAMY-MUTT4.jpg" style="width:100%; margin-bottom:5px;"><img src="https://dynamic-media-cdn.tripadvisor.com/media/photo-o/14/f9/54/a8/img-20181007-114027-largejpg.jpg?w=1200&h=-1&s=1" style="width:100%; margin-bottom:5px;">\n            <a href="https://www.google.com/maps/search/?api=1&query=Raghavendra%20Swamy%20Math%20Tirumala%20temple" target="_blank">Google Maps</a>\n        ', 'speech': 'Raghavendra Swamy Math. Located in Tirumala, Andhra Pradesh, India. Sri Raghavendra Swamy Mutt is a hindu temple, located at RE Mada St, Nehru Nagar, Tirupati, Andhra Pradesh 517501, India. They can be contacted via phone at +91 877 222 9036, visit their website www.srsmatha.org for more detailed information. ... Sree Tirumala Kashi Math.'}, 'Chitoor Math': {'html': '\n            <h4>Chitoor Math</h4>\n            <p><b>City:</b> Tirumala</p>\n            <p><b>State:</b> Andhra Pradesh</p>\n            <p><b>Country:</b> India</p>\n            <p>Sree Tirumala Kashi Math is a hindu temple, located at Tirumala - Tirupati Road, Near, Udupi Mutt, Tirumala, Tirupati, Andhra Pradesh 517504, India. They can be contacted via phone at +91 877 227 7316 , visit their website www.kashimath.org for more detailed information.</p>\n            <img src="https://lh3.googleusercontent.com/p/AF1QipMldFT6TAWUeM7L-BJqpnonWHyXXa8gJhKa5byu=s1600-w400" style="width:100%; margin-bottom:5px;"><img src="https://holyshrines.in/wp-content/uploads/2020/10/Tirumala-Venkateswara-Temple-at-Tirumala-in-Chittoor-700x375.jpg" style="width:100%; margin-bottom:5px;">\n            <a href="https://www.google.com/maps/search/?api=1&query=Chitoor%20Math%20Tirumala%20temple" target="_blank">Google Maps</a>\n        ', 'speech': 'Chitoor Math. Located in Tirumala, Andhra Pradesh, India. Sree Tirumala Kashi Math is a hindu temple, located at Tirumala - Tirupati Road, Near, Udupi Mutt, Tirumala, Tirupati, Andhra Pradesh 517504, India. They can be contacted via phone at +91 877 227 7316 , visit their website www.kashimath.org for more detailed information.'}, 'Vallabhacharya Math': {'html': '\n            <h4>Vallabhacharya Math</h4>\n            <p><b>City:</b> Tirumala</p>\n            <p><b>State:</b> Andhra Pradesh</p>\n            <p><b>Country:</b> India</p>\n            <p>Sri Vallabhacharya Matham is Vishnu temple located at Tirumala,Andhra Pradesh</p>\n            <img src="https://blogs.revv.co.in/blogs/wp-content/uploads/2020/12/Head-to-Tirumala-Temple-to-pay-homage-to-Balaji.jpg" style="width:100%; margin-bottom:5px;"><img src="http://www.templedairy.in/wp-content/uploads/2015/11/Tirumala-Tirupati-Devasthanam.jpg" style="width:100%; margin-bottom:5px;">\n            <a href="https://www.google.com/maps/search/?api=1&query=Vallabhacharya%20Math%20Tirumala%20temple" target="_blank">Google Maps</a>\n        ', 'speech': 'Vallabhacharya Math. Located in Tirumala, Andhra Pradesh, India. Sri Vallabhacharya Matham is Vishnu temple located at Tirumala,Andhra Pradesh'}, 'Parakala Math': {'html': '\n            <h4>Parakala Math</h4>\n            <p><b>City:</b> Tirumala</p>\n            <p><b>State:</b> Andhra Pradesh</p>\n            <p><b>Country:</b> India</p>\n            <p>Sri Lakshmi Hayagreeva Temple. Sri Lakshmi Hayagreeva Temple in Mahbubangar was established in 1982. Mahbubanagar is a district headquarters about 100 Km from Hyderabad on route to Bangalore and can be easily reached by Train, Express Bus or car from Hyderabad. The temple is situated in Sri Venkateshwara Colony which is a very nice neighborhood.</p>\n            <img src="https://www.parakalamatham.org/wp-content/uploads/2021/07/Mahbubnagar-Mutt-3-1024x768.jpg" style="width:100%; margin-bottom:5px;"><img src="https://www.parakalamatham.org/wp-content/uploads/2020/12/1.IMG-20190814-WA0019.jpg" style="width:100%; margin-bottom:5px;">\n            <a href="https://www.google.com/maps/search/?api=1&query=Parakala%20Math%20Tirumala%20temple" target="_blank">Google Maps</a>\n        ', 'speech': 'Parakala Math. Located in Tirumala, Andhra Pradesh, India. Sri Lakshmi Hayagreeva Temple. Sri Lakshmi Hayagreeva Temple in Mahbubangar was established in 1982. Mahbubanagar is a district headquarters about 100 Km from Hyderabad on route to Bangalore and can be easily reached by Train, Express Bus or car from Hyderabad. The temple is situated in Sri Venkateshwara Colony which is a very nice neighborhood.'}, 'Vikhanasa Math': {'html': '\n            <h4>Vikhanasa Math</h4>\n            <p><b>City:</b> Tirumala</p>\n            <p><b>State:</b> Andhra Pradesh</p>\n            <p><b>Country:</b> India</p>\n            <p>Swami Pushkarini - Tirumala. Click here for Sri Varaha Swamy Temple\'s location. The Agama which was laid by Vaikhanasa Maharshi is being practiced in Tirumala. The Agama put forth by Vaikhanasa Maharshi is called \'Vaikhanasa Agama\'. All the rituals are being done as per the Vaikhanasa Agama tradition in Tirumala.</p>\n            <img src="https://4.bp.blogspot.com/-d8R6oZp7Qx4/Wj56OQLAaYI/AAAAAAAABLY/jEXczK0MzhsxvIBQ-JyOzWFdHhx-3VMiwCEwYBhgL/s1600/IMG_20171126_183233671_LL.jpg" style="width:100%; margin-bottom:5px;"><img src="https://blogs.revv.co.in/blogs/wp-content/uploads/2020/12/Head-to-Tirumala-Temple-to-pay-homage-to-Balaji.jpg" style="width:100%; margin-bottom:5px;">\n            <a href="https://www.google.com/maps/search/?api=1&query=Vikhanasa%20Math%20Tirumala%20temple" target="_blank">Google Maps</a>\n        ', 'speech': "Vikhanasa Math. Located in Tirumala, Andhra Pradesh, India. Swami Pushkarini - Tirumala. Click here for Sri Varaha Swamy Temple's location. The Agama which was laid by Vaikhanasa Maharshi is being practiced in Tirumala. The Agama put forth by Vaikhanasa Maharshi is called 'Vaikhanasa Agama'. All the rituals are being done as per the Vaikhanasa Agama tradition in Tirumala."}, 'Andavan Math': {'html': '\n            <h4>Andavan Math</h4>\n            <p><b>City:</b> Tirumala</p>\n            <p><b>State:</b> Andhra Pradesh</p>\n            <p><b>Country:</b> India</p>\n            <p>Sponsorship of full Thadiyaradhanai for kainkaryaparas and visitors inside the temple, as well as dhonai prasadam distributed outside the temple to pilgrims for one day is Rs.3000. Transfers in Indian currency should be made only to the ICICI Bank Account of Sri Srimath mad Andavan Ashramam, Tirumala, indicated below. Please make sure that you ...</p>\n            <img src="https://sacredsites.com/images/asia/india/tirumala-venkateshwara-temple-1200.jpg" style="width:100%; margin-bottom:5px;"><img src="https://blogs.revv.co.in/blogs/wp-content/uploads/2020/12/Head-to-Tirumala-Temple-to-pay-homage-to-Balaji.jpg" style="width:100%; margin-bottom:5px;">\n            <a href="https://www.google.com/maps/search/?api=1&query=Andavan%20Math%20Tirumala%20temple" target="_blank">Google Maps</a>\n        ', 'speech': 'Andavan Math. Located in Tirumala, Andhra Pradesh, India. Sponsorship of full Thadiyaradhanai for kainkaryaparas and visitors inside the temple, as well as dhonai prasadam distributed outside the temple to pilgrims for one day is Rs.3000. Transfers in Indian currency should be made only to the ICICI Bank Account of Sri Srimath mad Andavan Ashramam, Tirumala, indicated below. Please make sure that you ...'}, 'Vasavi Bhavan': {'html': '\n            <h4>Vasavi Bhavan</h4>\n            <p><b>City:</b> Tirumala</p>\n            <p><b>State:</b> Andhra Pradesh</p>\n            <p><b>Country:</b> India</p>\n            <p>Know the details about the Vasavi Bhavan Tirumala Room Booking Online Phone Number, Vasavi Bhavan TTD Accommodation Booking Facilities Timings Many pilgrims come to the Tirumala temple daily. Most of the pilgrims who come to Tirumala temple want to stay in Tirumala in the presence of the Lord. for this purpose, the TTD has built many rest ...</p>\n            <img src="http://photos.wikimapia.org/p/00/04/08/28/57_full.jpg" style="width:100%; margin-bottom:5px;"><img src="https://images.herzindagi.info/image/2023/Jul/Tirumala-Tirupati-Balaji-Temple.jpg" style="width:100%; margin-bottom:5px;">\n            <a href="https://www.google.com/maps/search/?api=1&query=Vasavi%20Bhavan%20Tirumala%20temple" target="_blank">Google Maps</a>\n        ', 'speech': 'Vasavi Bhavan. Located in Tirumala, Andhra Pradesh, India. Know the details about the Vasavi Bhavan Tirumala Room Booking Online Phone Number, Vasavi Bhavan TTD Accommodation Booking Facilities Timings Many pilgrims come to the Tirumala temple daily. Most of the pilgrims who come to Tirumala temple want to stay in Tirumala in the presence of the Lord. for this purpose, the TTD has built many rest ...'}, 'Uttaradi Math': {'html': '\n            <h4>Uttaradi Math</h4>\n            <p><b>City:</b> Tirumala</p>\n            <p><b>State:</b> Andhra Pradesh</p>\n            <p><b>Country:</b> India</p>\n            <p>Tirumala is not only home for the Tirumala temple but also home for many other mutts which are located in the Tirumala to continue the Spiritual works. Out of all these mutts in Tirumala Uttaradi Mutt is one of the very important mutts which is located behind the temple of Lord Varaha Swamy in Tirumala.</p>\n            <img src="https://um-site.sgp1.cdn.digitaloceanspaces.com/um-website-media/rsz-banner-02-1629805219Leyk5.jpg" style="width:100%; margin-bottom:5px;"><img src="https://blogs.revv.co.in/blogs/wp-content/uploads/2020/12/Head-to-Tirumala-Temple-to-pay-homage-to-Balaji.jpg" style="width:100%; margin-bottom:5px;">\n            <a href="https://www.google.com/maps/search/?api=1&query=Uttaradi%20Math%20Tirumala%20temple" target="_blank">Google Maps</a>\n        ', 'speech': 'Uttaradi Math. Located in Tirumala, Andhra Pradesh, India. Tirumala is not only home for the Tirumala temple but also home for many other mutts which are located in the Tirumala to continue the Spiritual works. Out of all these mutts in Tirumala Uttaradi Mutt is one of the very important mutts which is located behind the temple of Lord Varaha Swamy in Tirumala.'}, 'Pushpagiri Math': {'html': '\n            <h4>Pushpagiri Math</h4>\n            <p><b>City:</b> Tirumala</p>\n            <p><b>State:</b> Andhra Pradesh</p>\n            <p><b>Country:</b> India</p>\n            <p>The Hills is the abode of Lord Mallikarjuna (Lord Shiva) and is the reigning deity of Pushpagiri. The temple was built by Queen Shanthala Devi, a renowned danseuse and the Queen of King Vishnuvarrdhana during the 11 th Century. The Math has seen several pontiffs and it has a large group of followers around the globe.</p>\n            <img src="https://photos.wikimapia.org/p/00/02/51/44/99_full.jpg" style="width:100%; margin-bottom:5px;"><img src="https://photos.wikimapia.org/p/00/02/51/45/09_full.jpg" style="width:100%; margin-bottom:5px;">\n            <a href="https://www.google.com/maps/search/?api=1&query=Pushpagiri%20Math%20Tirumala%20temple" target="_blank">Google Maps</a>\n        ', 'speech': 'Pushpagiri Math. Located in Tirumala, Andhra Pradesh, India. The Hills is the abode of Lord Mallikarjuna (Lord Shiva) and is the reigning deity of Pushpagiri. The temple was built by Queen Shanthala Devi, a renowned danseuse and the Queen of King Vishnuvarrdhana during the 11 th Century. The Math has seen several pontiffs and it has a large group of followers around the globe.'}, 'Hathiramji Math': {'html': '\n            <h4>Hathiramji Math</h4>\n            <p><b>City:</b> Tirumala</p>\n            <p><b>State:</b> Andhra Pradesh</p>\n            <p><b>Country:</b> India</p>\n            <p>Hathiramji Mutt is situated to the south of Srivari temple at a higher place. This Mutt is very familiar since 500 years in Tirumala. This Mutt was founded by \'Hathiramji\'. He was also called \'Bavaji\'. That\'s why this Mutt is known as Hatiramji Mutt.</p>\n            <img src="https://4.bp.blogspot.com/-q1tfTk8gKH8/XDBh0_UeN0I/AAAAAAABP5Y/KvTDFnSwA00cf3y6EvRRf04K07qhjxtEACLcBGAs/s1600/WP_20180615_14_28_31_Pro__highres.jpg" style="width:100%; margin-bottom:5px;"><img src="https://lookaside.fbsbx.com/lookaside/crawler/media/?media_id=2388692527848889" style="width:100%; margin-bottom:5px;">\n            <a href="https://www.google.com/maps/search/?api=1&query=Hathiramji%20Math%20Tirumala%20temple" target="_blank">Google Maps</a>\n        ', 'speech': "Hathiramji Math. Located in Tirumala, Andhra Pradesh, India. Hathiramji Mutt is situated to the south of Srivari temple at a higher place. This Mutt is very familiar since 500 years in Tirumala. This Mutt was founded by 'Hathiramji'. He was also called 'Bavaji'. That's why this Mutt is known as Hatiramji Mutt."}, 'Govindarajaswamy Temple': {'html': '\n            <h4>Govindarajaswamy Temple</h4>\n            <p><b>City:</b> Tirupati</p>\n            <p><b>State:</b> Andhra Pradesh</p>\n            <p><b>Country:</b> India</p>\n            <p>Sri Govindarajaswamy Temple is an ancient Hindu Vaishnavite temple situated in the heart of Tirupati city in Tirupati district of Andhra Pradesh in India. The temple was built during 12th century and was consecrated in the year 1130 AD by Ramanuja by the Thenkalai Vaikhanasa traditions. [1] The temple is one of the earliest structures in Tirupati and also one of the biggest temple complexes in ...</p>\n            <img src="https://hindupost.in/wp-content/uploads/2020/06/govindraja-swamy-tirupati-1.png" style="width:100%; margin-bottom:5px;"><img src="http://4.bp.blogspot.com/-i3ilpe-GJ7g/UOuRXeSaJYI/AAAAAAAAAf0/qtMBtkGTL_0/s1600/page34-govinda_rajaswamy_temple.jpg" style="width:100%; margin-bottom:5px;">\n            <a href="https://www.google.com/maps/search/?api=1&query=Govindarajaswamy%20Temple%20Tirupati%20temple" target="_blank">Google Maps</a>\n        ', 'speech': 'Govindarajaswamy Temple. Located in Tirupati, Andhra Pradesh, India. Sri Govindarajaswamy Temple is an ancient Hindu Vaishnavite temple situated in the heart of Tirupati city in Tirupati district of Andhra Pradesh in India. The temple was built during 12th century and was consecrated in the year 1130 AD by Ramanuja by the Thenkalai Vaikhanasa traditions. [1] The temple is one of the earliest structures in Tirupati and also one of the biggest temple complexes in ...'}, 'Bhakta Kannappa Temple': {'html': '\n            <h4>Bhakta Kannappa Temple</h4>\n            <p><b>City:</b> Sri Kalahasti</p>\n            <p><b>State:</b> Andhra Pradesh</p>\n            <p><b>Country:</b> India</p>\n            <p>This is our first visit to this temple. Bhakta Kannappa Temple, located on a hill in Sri Kalahasti, is dedicated to the legendary hunter who sacrificed his eyes for Shiva. This temple is visible at a.distance from Sri Kalahasteeswara Temple. We have to climb the steps to reach the temple. From the top, the view of the town Sri Kalahasti looks ...</p>\n            <img src="http://templesinindiainfo.com/wp-content/uploads/2014/07/Srikalahasti-Bhakta-Kannappa-Temple.jpg" style="width:100%; margin-bottom:5px;"><img src="https://lh3.googleusercontent.com/p/AF1QipNPaE4CyshUwrFC7pGleoWTp03twkWIkzoz45YO" style="width:100%; margin-bottom:5px;">\n            <a href="https://www.google.com/maps/search/?api=1&query=Bhakta%20Kannappa%20Temple%20Sri%20Kalahasti%20temple" target="_blank">Google Maps</a>\n        ', 'speech': 'Bhakta Kannappa Temple. Located in Sri Kalahasti, Andhra Pradesh, India. This is our first visit to this temple. Bhakta Kannappa Temple, located on a hill in Sri Kalahasti, is dedicated to the legendary hunter who sacrificed his eyes for Shiva. This temple is visible at a.distance from Sri Kalahasteeswara Temple. We have to climb the steps to reach the temple. From the top, the view of the town Sri Kalahasti looks ...'}, 'Durgamma Temple': {'html': '\n            <h4>Durgamma Temple</h4>\n            <p><b>City:</b> Sri Kalahasti</p>\n            <p><b>State:</b> Andhra Pradesh</p>\n            <p><b>Country:</b> India</p>\n            <p>As for the Srikalahasti Durgamma Konda Temple, there is also, rather interesting and unusual custom, which involves the idol of the Goddess Durga being bound by chains. According to the natives\' legends and beliefs, such a way serves to depict the strengths of the goddess - these need to be restrained or \'tied up\', so that they do not ...</p>\n            <img src="https://www.templepurohit.com/wp-content/uploads/2015/09/Sri-Kalahasti-Temple-Srikalahasti-Andhra-Pradesh.jpg" style="width:100%; margin-bottom:5px;"><img src="https://lh4.googleusercontent.com/-rXA1A1qv9Lo/TXSQMBtvN3I/AAAAAAAAAnw/IBETsxVl0Z0/s1600/Picture6.jpg" style="width:100%; margin-bottom:5px;">\n            <a href="https://www.google.com/maps/search/?api=1&query=Durgamma%20Temple%20Sri%20Kalahasti%20temple" target="_blank">Google Maps</a>\n        ', 'speech': "Durgamma Temple. Located in Sri Kalahasti, Andhra Pradesh, India. As for the Srikalahasti Durgamma Konda Temple, there is also, rather interesting and unusual custom, which involves the idol of the Goddess Durga being bound by chains. According to the natives' legends and beliefs, such a way serves to depict the strengths of the goddess - these need to be restrained or 'tied up', so that they do not ..."}, 'Anjaneya Swamy Temple': {'html': '\n            <h4>Anjaneya Swamy Temple</h4>\n            <p><b>City:</b> Raghavapuram Naidu Indlu</p>\n            <p><b>State:</b> Andhra Pradesh</p>\n            <p><b>Country:</b> India</p>\n            <p>One of the most sacred places reflecting Hinduism is the Sri Anjaneya Swamy Temple, solely dedicated to Lord Hanuman, otherwise known as Anjaneya or Anjaniputra. The famous Sri Anjaneya Swamy Temple is situated at Nanganallur, a suburb in Chennai, Tamil Nadu, India. This temple is a shrine of devotion that attracts thousands of pilgrims every year to seek the blessings of the mighty monkey god ...</p>\n            <img src="https://media1.thrillophilia.com/filestore/toj5muqo40cgmh8pimr3bnwd0zof_1570630274_Temple.jpg?w=1440&dpr=2" style="width:100%; margin-bottom:5px;"><img src="https://live.staticflickr.com/743/31799876844_071d914bba_b.jpg" style="width:100%; margin-bottom:5px;">\n            <a href="https://www.google.com/maps/search/?api=1&query=Anjaneya%20Swamy%20Temple%20Raghavapuram%20Naidu%20Indlu%20temple" target="_blank">Google Maps</a>\n        ', 'speech': 'Anjaneya Swamy Temple. Located in Raghavapuram Naidu Indlu, Andhra Pradesh, India. One of the most sacred places reflecting Hinduism is the Sri Anjaneya Swamy Temple, solely dedicated to Lord Hanuman, otherwise known as Anjaneya or Anjaniputra. The famous Sri Anjaneya Swamy Temple is situated at Nanganallur, a suburb in Chennai, Tamil Nadu, India. This temple is a shrine of devotion that attracts thousands of pilgrims every year to seek the blessings of the mighty monkey god ...'}, 'Sri Kodanda Rama Swamy Temple': {'html': '\n            <h4>Sri Kodanda Rama Swamy Temple</h4>\n            <p><b>City:</b> Tirupati</p>\n            <p><b>State:</b> Andhra Pradesh</p>\n            <p><b>Country:</b> India</p>\n            <p>Sri Kodandaramaswamy Temple is a well known temple in the city of Tirupati located in Tirupati district of Andhra Pradesh, India.The temple is dedicated to Hindu deity Rama, an incarnation of Vishnu along with Sita and Lakshmana.The temple also has a sub-shrine for Rama\'s mount Anjaneya.</p>\n            <img src="https://blog.yatradham.org/wp-content/uploads/2022/05/Kodandarama-Temple-Tirupati-Timings.jpg" style="width:100%; margin-bottom:5px;"><img src="https://www.trawell.in/admin/images/upload/573455854Tirupati_Kodandarama_Temple_Main.jpg" style="width:100%; margin-bottom:5px;">\n            <a href="https://www.google.com/maps/search/?api=1&query=Sri%20Kodanda%20Rama%20Swamy%20Temple%20Tirupati%20temple" target="_blank">Google Maps</a>\n        ', 'speech': "Sri Kodanda Rama Swamy Temple. Located in Tirupati, Andhra Pradesh, India. Sri Kodandaramaswamy Temple is a well known temple in the city of Tirupati located in Tirupati district of Andhra Pradesh, India.The temple is dedicated to Hindu deity Rama, an incarnation of Vishnu along with Sita and Lakshmana.The temple also has a sub-shrine for Rama's mount Anjaneya."}, 'Sri Vinayaka Swamy Temple': {'html': '\n            <h4>Sri Vinayaka Swamy Temple</h4>\n            <p><b>City:</b> Tirupati</p>\n            <p><b>State:</b> Andhra Pradesh</p>\n            <p><b>Country:</b> India</p>\n            <p>Sri Varasiddhi Vinayaka Temple, situated at Kanipakam town, is a 10th-century Temple dedicated to Vinayaka at 75 km from Tirupati. Other than these, temples like Govindaraja Temple, Kalyana Venkateswara Temple(Srinivasa Mangapuram), Kodandarama Temple, Kapila Theertham are situated within the Tirupati city.</p>\n            <img src="https://famoustemplesofindia.com/wp-content/uploads/2023/09/Tirumala-Tirupati-Venkateswara-Swamy-3-819x1024.jpg" style="width:100%; margin-bottom:5px;"><img src="https://files.yappe.in/place/small/sri-vara-siddhi-vinayaka-ayyappa-swamy-temple-10636307.webp" style="width:100%; margin-bottom:5px;">\n            <a href="https://www.google.com/maps/search/?api=1&query=Sri%20Vinayaka%20Swamy%20Temple%20Tirupati%20temple" target="_blank">Google Maps</a>\n        ', 'speech': 'Sri Vinayaka Swamy Temple. Located in Tirupati, Andhra Pradesh, India. Sri Varasiddhi Vinayaka Temple, situated at Kanipakam town, is a 10th-century Temple dedicated to Vinayaka at 75 km from Tirupati. Other than these, temples like Govindaraja Temple, Kalyana Venkateswara Temple(Srinivasa Mangapuram), Kodandarama Temple, Kapila Theertham are situated within the Tirupati city.'}, 'Sri Venkateshwara Swamy Temple': {'html': '\n            <h4>Sri Venkateshwara Swamy Temple</h4>\n            <p><b>City:</b> Nendragunta</p>\n            <p><b>State:</b> Andhra Pradesh</p>\n            <p><b>Country:</b> India</p>\n            <p>Hindu Temple and Cultural Society of USA, Inc. Sri Venkateswara Temple (Balaji Mandir) and Community Center (Non-Profit Tax-Exempt Organization.) 1 Balaji Temple Drive, Bridgewater, NJ-08807 Ph: (908) 725-4477</p>\n            <img src="https://i.ytimg.com/vi/mbeVvAguGX8/maxresdefault.jpg" style="width:100%; margin-bottom:5px;"><img src="https://www.holidify.com/images/cmsuploads/compressed/shutterstock_11162494701_20200130180527_20200130180558.png" style="width:100%; margin-bottom:5px;">\n            <a href="https://www.google.com/maps/search/?api=1&query=Sri%20Venkateshwara%20Swamy%20Temple%20Nendragunta%20temple" target="_blank">Google Maps</a>\n        ', 'speech': 'Sri Venkateshwara Swamy Temple. Located in Nendragunta, Andhra Pradesh, India. Hindu Temple and Cultural Society of USA, Inc. Sri Venkateswara Temple (Balaji Mandir) and Community Center (Non-Profit Tax-Exempt Organization.) 1 Balaji Temple Drive, Bridgewater, NJ-08807 Ph: (908) 725-4477'}, 'Vardaraja Swamy Temple': {'html': '\n            <h4>Vardaraja Swamy Temple</h4>\n            <p><b>City:</b> Tirupati</p>\n            <p><b>State:</b> Andhra Pradesh</p>\n            <p><b>Country:</b> India</p>\n            <p>Varadharaja Perumal Temple, also called Hastagiri, Attiyuran, Attigiri, Perarulalan Perumal temple, Kanchi koil, Thirukatchi, or Perumal koil is a Hindu temple dedicated to Vishnu located in the city of Kanchipuram, Tamil Nadu, India.It is one of the Divya Desams, the 108 temples of Vishnu believed to have been visited by the 12 poet saints, or the Alvars. [1]</p>\n            <img src="https://www.templetimings.com/wp-content/uploads/2018/08/perumal-temple-tirunelveli-768x576.jpg" style="width:100%; margin-bottom:5px;"><img src="https://dynamic-media-cdn.tripadvisor.com/media/photo-o/0e/60/86/bd/varahaswamy-temple.jpg?w=300&h=300&s=1" style="width:100%; margin-bottom:5px;">\n            <a href="https://www.google.com/maps/search/?api=1&query=Vardaraja%20Swamy%20Temple%20Tirupati%20temple" target="_blank">Google Maps</a>\n        ', 'speech': 'Vardaraja Swamy Temple. Located in Tirupati, Andhra Pradesh, India. Varadharaja Perumal Temple, also called Hastagiri, Attiyuran, Attigiri, Perarulalan Perumal temple, Kanchi koil, Thirukatchi, or Perumal koil is a Hindu temple dedicated to Vishnu located in the city of Kanchipuram, Tamil Nadu, India.It is one of the Divya Desams, the 108 temples of Vishnu believed to have been visited by the 12 poet saints, or the Alvars. [1]'}, 'Kapila Theertham': {'html': '\n            <h4>Kapila Theertham</h4>\n            <p><b>City:</b> Tirupati</p>\n            <p><b>State:</b> Andhra Pradesh</p>\n            <p><b>Country:</b> India</p>\n            <p>Kapila Theertham is a small Shaivite temple and theertham, located at Tirupati in Andhra Pradesh, India.The idol of Shiva is believed to have been installed by Kapila, so Shiva here is referred to as Kapileswara.. The temple stands at the entrance to a mountain cave in one of the steep and vertical faces at the foot of the Tirumala hills, which are part of Seshachalam Hills, where the waters ...</p>\n            <img src="https://2.bp.blogspot.com/-3jKdIqKy2qo/XDGSlIu7VSI/AAAAAAABQDU/H1MDWtEur9wzOugmRIq1oinDnrY2S0LHgCEwYBhgL/s640/2017-10-08.jpg" style="width:100%; margin-bottom:5px;"><img src="https://2.bp.blogspot.com/-VXlhhqHF5sg/XDGSkYZK5zI/AAAAAAABQDI/VC1pIQXERBcsUK453C_ulAlFc0RU7hgEACEwYBhgL/s1600/2017-07-22.jpg" style="width:100%; margin-bottom:5px;">\n            <a href="https://www.google.com/maps/search/?api=1&query=Kapila%20Theertham%20Tirupati%20temple" target="_blank">Google Maps</a>\n        ', 'speech': 'Kapila Theertham. Located in Tirupati, Andhra Pradesh, India. Kapila Theertham is a small Shaivite temple and theertham, located at Tirupati in Andhra Pradesh, India.The idol of Shiva is believed to have been installed by Kapila, so Shiva here is referred to as Kapileswara.. The temple stands at the entrance to a mountain cave in one of the steep and vertical faces at the foot of the Tirumala hills, which are part of Seshachalam Hills, where the waters ...'}, 'Sahashra Lingeswara Swamy Temple': {'html': '\n            <h4>Sahashra Lingeswara Swamy Temple</h4>\n            <p><b>City:</b> Vedam</p>\n            <p><b>State:</b> Andhra Pradesh</p>\n            <p><b>Country:</b> India</p>\n            <p>Sahasra Lingeshwara Swami Temple is a hindu temple and tourist attraction located in Srikalahasti, Andhra Pradesh. The average rating of this place is 4.60 out of 5 stars based on 324 reviews. The street address of this place is MPR4+7RJ, Srikalahasti - Masalapadu Rd, Srikalahasti, Thottambedu, Andhra Pradesh 517644, India.</p>\n            <img src="https://holyshrines.in/wp-content/uploads/2020/10/Ponnuru-Sahasra-Lingeshwara-Swamy-Shiva-Temple11.jpg" style="width:100%; margin-bottom:5px;"><img src="https://www.visittemples.com/uploads/temple/image/sahas8_1725062400.jpg" style="width:100%; margin-bottom:5px;">\n            <a href="https://www.google.com/maps/search/?api=1&query=Sahashra%20Lingeswara%20Swamy%20Temple%20Vedam%20temple" target="_blank">Google Maps</a>\n        ', 'speech': 'Sahashra Lingeswara Swamy Temple. Located in Vedam, Andhra Pradesh, India. Sahasra Lingeshwara Swami Temple is a hindu temple and tourist attraction located in Srikalahasti, Andhra Pradesh. The average rating of this place is 4.60 out of 5 stars based on 324 reviews. The street address of this place is MPR4+7RJ, Srikalahasti - Masalapadu Rd, Srikalahasti, Thottambedu, Andhra Pradesh 517644, India.'}, 'Sri Lakshmi Ganapathi Swammy Temple': {'html': '\n            <h4>Sri Lakshmi Ganapathi Swammy Temple</h4>\n            <p><b>City:</b> Sri Kalahasti</p>\n            <p><b>State:</b> Andhra Pradesh</p>\n            <p><b>Country:</b> India</p>\n            <p>Srikalahasti Temple is located in the town of Srikalahasti, in the state of Andhra Pradesh, India. It is one of the most famous Shiva temples in South India. Sri Kalahasti temple, situated 36 km away from Tirupati is famous for its Vayu linga, one of the Panchabhoota Sthalams, representing wind.The inner temple was constructed around 5th century and the outer temple was constructed in the 12th ...</p>\n            <img src="https://i0.wp.com/hindupad.com/wp-content/uploads/2013/02/Srikalahasti-Temple.jpg?w=1240&ssl=1" style="width:100%; margin-bottom:5px;"><img src="https://www.tirupatihelps.com/wp-content/uploads/2019/01/Srikalahasti-Temple-1024x679.jpg" style="width:100%; margin-bottom:5px;">\n            <a href="https://www.google.com/maps/search/?api=1&query=Sri%20Lakshmi%20Ganapathi%20Swammy%20Temple%20Sri%20Kalahasti%20temple" target="_blank">Google Maps</a>\n        ', 'speech': 'Sri Lakshmi Ganapathi Swammy Temple. Located in Sri Kalahasti, Andhra Pradesh, India. Srikalahasti Temple is located in the town of Srikalahasti, in the state of Andhra Pradesh, India. It is one of the most famous Shiva temples in South India. Sri Kalahasti temple, situated 36 km away from Tirupati is famous for its Vayu linga, one of the Panchabhoota Sthalams, representing wind.The inner temple was constructed around 5th century and the outer temple was constructed in the 12th ...'}, 'Sri Ramula Vari Temple': {'html': '\n            <h4>Sri Ramula Vari Temple</h4>\n            <p><b>City:</b> Sri Kalahasti</p>\n            <p><b>State:</b> Andhra Pradesh</p>\n            <p><b>Country:</b> India</p>\n            <p>The Srikalahasti Temple is located in the town of Srikalahasti in Tirupati district in the state of Andhra Pradesh, India. Siva in his aspect as Vayu is worshipped as Kalahasteeswara. The temple is also regarded as Rahu-Ketu kshetra and Dakshina Kailasam. According to regional tradition, it is said to be the site where Kannappa was ready to offer both his eyes to cover blood flowing from the ...</p>\n            <img src="https://www.templepurohit.com/wp-content/uploads/2015/09/Sri-Kalahasti-Temple-Srikalahasti-Andhra-Pradesh.jpg" style="width:100%; margin-bottom:5px;"><img src="https://www.templepurohit.com/wp-content/uploads/2015/09/Sri-Kalahasti-Temple-e1455511300537.jpg" style="width:100%; margin-bottom:5px;">\n            <a href="https://www.google.com/maps/search/?api=1&query=Sri%20Ramula%20Vari%20Temple%20Sri%20Kalahasti%20temple" target="_blank">Google Maps</a>\n        ', 'speech': 'Sri Ramula Vari Temple. Located in Sri Kalahasti, Andhra Pradesh, India. The Srikalahasti Temple is located in the town of Srikalahasti in Tirupati district in the state of Andhra Pradesh, India. Siva in his aspect as Vayu is worshipped as Kalahasteeswara. The temple is also regarded as Rahu-Ketu kshetra and Dakshina Kailasam. According to regional tradition, it is said to be the site where Kannappa was ready to offer both his eyes to cover blood flowing from the ...'}, 'Srivari Padalu': {'html': '\n            <h4>Srivari Padalu</h4>\n            <p><b>City:</b> Tirumala</p>\n            <p><b>State:</b> Andhra Pradesh</p>\n            <p><b>Country:</b> India</p>\n            <p>Sri Vari Padalu timings are from 6:00 AM - 6:00 PM. How To Reach Srivari Padalu. Padala mandapam is at a distance of 6 KMs from Tirumala Balaji Temple. It is located to the north of Balaji Temple. APSRTC operates buses from CRO Office to padalu mandapam. Taxis will also be operating between Padalu and Tirumala Bus Stand.</p>\n            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgpRxu4qS1NL7Ug3qHVxzqHaVRWyXEiHYr6r5r7GE57sd7bbc2izjPI78WZ6E7cEAVQ7FEBs2Sjz8kGFWp8X9uC7UYdeVw8bJ7k5JF7Oo74NKkHQHF7x02cHoMBOWFAOHwuWu6Wqj2i7OE/s892/Sri-Vari-Padalu.jpg" style="width:100%; margin-bottom:5px;"><img src="https://news.tirumala.org/wp-content/uploads/2013/10/Picture-053.jpg" style="width:100%; margin-bottom:5px;">\n            <a href="https://www.google.com/maps/search/?api=1&query=Srivari%20Padalu%20Tirumala%20temple" target="_blank">Google Maps</a>\n        ', 'speech': 'Srivari Padalu. Located in Tirumala, Andhra Pradesh, India. Sri Vari Padalu timings are from 6:00 AM - 6:00 PM. How To Reach Srivari Padalu. Padala mandapam is at a distance of 6 KMs from Tirumala Balaji Temple. It is located to the north of Balaji Temple. APSRTC operates buses from CRO Office to padalu mandapam. Taxis will also be operating between Padalu and Tirumala Bus Stand.'}, 'Srikalahasti Temple': {'html': '\n            <h4>Srikalahasti Temple</h4>\n            <p><b>City:</b> Sri Kalahasti</p>\n            <p><b>State:</b> Andhra Pradesh</p>\n            <p><b>Country:</b> India</p>\n            <p>The Srikalahasti Temple is located in the town of Srikalahasti in Tirupati district in the state of Andhra Pradesh, India. Siva in his aspect as Vayu is worshipped as Kalahasteeswara. The temple is also regarded as Rahu-Ketu kshetra and Dakshina Kailasam.According to regional tradition, it is said to be the site where Kannappa was ready to offer both his eyes to cover blood flowing from the ...</p>\n            <img src="https://www.templepurohit.com/wp-content/uploads/2015/09/Sri-Kalahasti-Temple-Srikalahasti-Andhra-Pradesh.jpg" style="width:100%; margin-bottom:5px;"><img src="https://i.pinimg.com/originals/51/97/ac/5197acac86d5c1dbfa37245997cd77ad.jpg" style="width:100%; margin-bottom:5px;">\n            <a href="https://www.google.com/maps/search/?api=1&query=Srikalahasti%20Temple%20Sri%20Kalahasti%20temple" target="_blank">Google Maps</a>\n        ', 'speech': 'Srikalahasti Temple. Located in Sri Kalahasti, Andhra Pradesh, India. The Srikalahasti Temple is located in the town of Srikalahasti in Tirupati district in the state of Andhra Pradesh, India. Siva in his aspect as Vayu is worshipped as Kalahasteeswara. The temple is also regarded as Rahu-Ketu kshetra and Dakshina Kailasam.According to regional tradition, it is said to be the site where Kannappa was ready to offer both his eyes to cover blood flowing from the ...'}};
+
+        function showDetails(name) {
+            const popup = document.getElementById('details-popup');
+            const content = document.getElementById('details-content');
+            content.innerHTML = templeDetails[name].html;
+            popup.style.display = 'block';
+            window.currentSpeech = templeDetails[name].speech;
+        }
+
+        function listenDetails() {
+            window.speechSynthesis.cancel();
+            let utterance = new SpeechSynthesisUtterance(window.currentSpeech);
+            utterance.lang = 'en-US';
+            window.speechSynthesis.speak(utterance);
+        }
+    </script>
+    
+    
+        <div id='dialog-box' style='
+            position: fixed;
+            bottom: 60px;
+            right: 10px;
+            width: 280px;
+            max-height: 300px;
+            overflow-y: auto;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 2px 2px 6px rgba(0,0,0,0.3);
+            z-index: 1000;
+            display: none;
+            font-family: Arial, sans-serif;
+        '>
+            <div style='display: flex; justify-content: space-between; align-items: center;'>
+                <strong>Nearby Temples</strong>
+                <button id="close-dialog" style='
+                    background: none;
+                    border: none;
+                    font-size: 20px;
+                    cursor: pointer;
+                    line-height: 1;
+                '>&times;</button>
+            </div>
+            <ul style='margin-top: 10px; padding-left: 20px;'><li><b>Shrine</b> - Penumallam (26.7 km)</li><li><b>Sringeri Math</b> - Tirumala (0.1 km)</li><li><b>Kasi math</b> - Tirumala (0.1 km)</li><li><b>Udipi Krishna Math</b> - Tirumala (0.1 km)</li><li><b>Jeeyar Math</b> - Tirumala (0.1 km)</li><li><b>Kanchi Kamakoti Math</b> - Tirumala (0.1 km)</li><li><b>Raghavendra Swamy Math</b> - Tirumala (0.1 km)</li><li><b>Chitoor Math</b> - Tirumala (0.1 km)</li><li><b>Vallabhacharya Math</b> - Tirumala (0.1 km)</li><li><b>Parakala Math</b> - Tirumala (0.0 km)</li><li><b>Vikhanasa Math</b> - Tirumala (0.1 km)</li><li><b>Andavan Math</b> - Tirumala (0.1 km)</li><li><b>Vasavi Bhavan</b> - Tirumala (0.2 km)</li><li><b>Uttaradi Math</b> - Tirumala (0.2 km)</li><li><b>Pushpagiri Math</b> - Tirumala (0.2 km)</li><li><b>Hathiramji Math</b> - Tirumala (0.5 km)</li><li><b>Govindarajaswamy Temple</b> - Tirupati (10.0 km)</li><li><b>Bhakta Kannappa Temple</b> - Sri Kalahasti (39.0 km)</li><li><b>Durgamma Temple</b> - Sri Kalahasti (39.3 km)</li><li><b>Anjaneya Swamy Temple</b> - Raghavapuram Naidu Indlu (21.7 km)</li><li><b>Sri Kodanda Rama Swamy Temple</b> - Tirupati (9.6 km)</li><li><b>Sri Vinayaka Swamy Temple</b> - Tirupati (10.2 km)</li><li><b>Sri Venkateshwara Swamy Temple</b> - Nendragunta (32.7 km)</li><li><b>Vardaraja Swamy Temple</b> - Tirupati (9.3 km)</li><li><b>Kapila Theertham</b> - Tirupati (8.9 km)</li><li><b>Sahashra Lingeswara Swamy Temple</b> - Vedam (39.2 km)</li><li><b>Sri Lakshmi Ganapathi Swammy Temple</b> - Sri Kalahasti (40.0 km)</li><li><b>Sri Ramula Vari Temple</b> - Sri Kalahasti (39.9 km)</li><li><b>Srivari Padalu</b> - Tirumala (1.4 km)</li><li><b>Srikalahasti Temple</b> - Sri Kalahasti (39.0 km)</li></ul>
+        </div>
+
+        <button id='open-dialog-btn' style='
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            padding: 8px 15px;
+            font-size: 14px;
+            cursor: pointer;
+            z-index: 1000;
+            border-radius: 5px;
+            border: 1px solid #666;
+            background: white;
+        '>Nearby Temples</button>
+        
+        <script>
+        const dialogBox = document.getElementById('dialog-box');
+        const openBtn = document.getElementById('open-dialog-btn');
+        const closeBtn = document.getElementById('close-dialog');
+
+        openBtn.addEventListener('click', () => {
+            dialogBox.style.display = 'block';
+            openBtn.style.display = 'none';
+        });
+
+        closeBtn.addEventListener('click', () => {
+            dialogBox.style.display = 'none';
+            openBtn.style.display = 'block';
+        });
+        </script>
+        
+    
+            <div class="folium-map" id="map_8e4ab7573660126030961b4a59332777" ></div>
+        
+</body>
+<script>
+    
+    
+            var map_8e4ab7573660126030961b4a59332777 = L.map(
+                "map_8e4ab7573660126030961b4a59332777",
+                {
+                    center: [13.6851453, 79.3447582],
+                    crs: L.CRS.EPSG3857,
+                    ...{
+  "zoom": 12,
+  "zoomControl": true,
+  "preferCanvas": false,
+}
+
+                }
+            );
+            L.control.scale().addTo(map_8e4ab7573660126030961b4a59332777);
+
+            
+
+        
+    
+            var tile_layer_d405e7649e62aafe838999120cf61a02 = L.tileLayer(
+                "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {
+  "minZoom": 0,
+  "maxZoom": 19,
+  "maxNativeZoom": 19,
+  "noWrap": false,
+  "attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors",
+  "subdomains": "abc",
+  "detectRetina": false,
+  "tms": false,
+  "opacity": 1,
+}
+
+            );
+        
+    
+            tile_layer_d405e7649e62aafe838999120cf61a02.addTo(map_8e4ab7573660126030961b4a59332777);
+        
+    
+            var marker_cluster_435c500789d89010616199832e348a4b = L.markerClusterGroup(
+                {
+}
+            );
+        
+    
+            var marker_30afcac167b240eb6e03ce691ef10856 = L.marker(
+                [13.6033601, 79.5767887],
+                {
+}
+            ).addTo(marker_cluster_435c500789d89010616199832e348a4b);
+        
+    
+            var icon_00ef1ebab56e04bc21ff642d7ff41ef5 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_5d699bed5056df13913eb11f2462da13 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_dd3994b64e7fbd241ed25270dcebe4ac = $(`<div id="html_dd3994b64e7fbd241ed25270dcebe4ac" style="width: 100.0%; height: 100.0%;">         <div>             <b>Shrine</b><br>             Penumallam<br>             <a href="#" onclick="showDetails('Shrine'); return false;">Details</a>         </div>         </div>`)[0];
+                popup_5d699bed5056df13913eb11f2462da13.setContent(html_dd3994b64e7fbd241ed25270dcebe4ac);
+            
+        
+
+        marker_30afcac167b240eb6e03ce691ef10856.bindPopup(popup_5d699bed5056df13913eb11f2462da13)
+        ;
+
+        
+    
+    
+                marker_30afcac167b240eb6e03ce691ef10856.setIcon(icon_00ef1ebab56e04bc21ff642d7ff41ef5);
+            
+    
+            var marker_4a2bdec17ac1e354c093de37172dc8ec = L.marker(
+                [13.6848965, 79.3434885],
+                {
+}
+            ).addTo(marker_cluster_435c500789d89010616199832e348a4b);
+        
+    
+            var icon_7fe64cfe553d0c7ec98a3cfd6a213c37 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_11979ee328b4541650d6bfd63923f9d3 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_86d23978c6aa6a4ac4591dcecfd58912 = $(`<div id="html_86d23978c6aa6a4ac4591dcecfd58912" style="width: 100.0%; height: 100.0%;">         <div>             <b>Sringeri Math</b><br>             Tirumala<br>             <a href="#" onclick="showDetails('Sringeri Math'); return false;">Details</a>         </div>         </div>`)[0];
+                popup_11979ee328b4541650d6bfd63923f9d3.setContent(html_86d23978c6aa6a4ac4591dcecfd58912);
+            
+        
+
+        marker_4a2bdec17ac1e354c093de37172dc8ec.bindPopup(popup_11979ee328b4541650d6bfd63923f9d3)
+        ;
+
+        
+    
+    
+                marker_4a2bdec17ac1e354c093de37172dc8ec.setIcon(icon_7fe64cfe553d0c7ec98a3cfd6a213c37);
+            
+    
+            var marker_934be4b70bc3e991d4382daccaa5a3aa = L.marker(
+                [13.6854698, 79.34383],
+                {
+}
+            ).addTo(marker_cluster_435c500789d89010616199832e348a4b);
+        
+    
+            var icon_4e342872cf129c00aeb64c90baa98ddf = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_b8ec5b7899f8ac8995f35b60870ba1c3 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_9d39183259c48154805a601d7f700b22 = $(`<div id="html_9d39183259c48154805a601d7f700b22" style="width: 100.0%; height: 100.0%;">         <div>             <b>Kasi math</b><br>             Tirumala<br>             <a href="#" onclick="showDetails('Kasi math'); return false;">Details</a>         </div>         </div>`)[0];
+                popup_b8ec5b7899f8ac8995f35b60870ba1c3.setContent(html_9d39183259c48154805a601d7f700b22);
+            
+        
+
+        marker_934be4b70bc3e991d4382daccaa5a3aa.bindPopup(popup_b8ec5b7899f8ac8995f35b60870ba1c3)
+        ;
+
+        
+    
+    
+                marker_934be4b70bc3e991d4382daccaa5a3aa.setIcon(icon_4e342872cf129c00aeb64c90baa98ddf);
+            
+    
+            var marker_c1658e4125c70aaaa853c2d3b0ba9f4c = L.marker(
+                [13.6856065, 79.343887],
+                {
+}
+            ).addTo(marker_cluster_435c500789d89010616199832e348a4b);
+        
+    
+            var icon_8665ed9989bd88710ef390bda0954bd6 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_1ed9d1e24d3f55251e0044d9bd1f0713 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_89aff3c6945024b9e4b807995078cfc5 = $(`<div id="html_89aff3c6945024b9e4b807995078cfc5" style="width: 100.0%; height: 100.0%;">         <div>             <b>Udipi Krishna Math</b><br>             Tirumala<br>             <a href="#" onclick="showDetails('Udipi Krishna Math'); return false;">Details</a>         </div>         </div>`)[0];
+                popup_1ed9d1e24d3f55251e0044d9bd1f0713.setContent(html_89aff3c6945024b9e4b807995078cfc5);
+            
+        
+
+        marker_c1658e4125c70aaaa853c2d3b0ba9f4c.bindPopup(popup_1ed9d1e24d3f55251e0044d9bd1f0713)
+        ;
+
+        
+    
+    
+                marker_c1658e4125c70aaaa853c2d3b0ba9f4c.setIcon(icon_8665ed9989bd88710ef390bda0954bd6);
+            
+    
+            var marker_e9529f3cdf604e1f521aedad07e54f47 = L.marker(
+                [13.6857318, 79.3439382],
+                {
+}
+            ).addTo(marker_cluster_435c500789d89010616199832e348a4b);
+        
+    
+            var icon_0d725687748cdfea200df9eb3bb78061 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_8e970e39d78b7fcd252e17d15df250ba = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_e4888f15853f68ed27282455cc54531f = $(`<div id="html_e4888f15853f68ed27282455cc54531f" style="width: 100.0%; height: 100.0%;">         <div>             <b>Jeeyar Math</b><br>             Tirumala<br>             <a href="#" onclick="showDetails('Jeeyar Math'); return false;">Details</a>         </div>         </div>`)[0];
+                popup_8e970e39d78b7fcd252e17d15df250ba.setContent(html_e4888f15853f68ed27282455cc54531f);
+            
+        
+
+        marker_e9529f3cdf604e1f521aedad07e54f47.bindPopup(popup_8e970e39d78b7fcd252e17d15df250ba)
+        ;
+
+        
+    
+    
+                marker_e9529f3cdf604e1f521aedad07e54f47.setIcon(icon_0d725687748cdfea200df9eb3bb78061);
+            
+    
+            var marker_31f40fcd8522a0176ffa75f2b5a4c024 = L.marker(
+                [13.6859728, 79.3439547],
+                {
+}
+            ).addTo(marker_cluster_435c500789d89010616199832e348a4b);
+        
+    
+            var icon_788df03323a8ea49cbb3c0d09851b252 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_6e9af232b7b317a3f19df0ec294a0e67 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_c76efafa2023792b34bc9310db241b7c = $(`<div id="html_c76efafa2023792b34bc9310db241b7c" style="width: 100.0%; height: 100.0%;">         <div>             <b>Kanchi Kamakoti Math</b><br>             Tirumala<br>             <a href="#" onclick="showDetails('Kanchi Kamakoti Math'); return false;">Details</a>         </div>         </div>`)[0];
+                popup_6e9af232b7b317a3f19df0ec294a0e67.setContent(html_c76efafa2023792b34bc9310db241b7c);
+            
+        
+
+        marker_31f40fcd8522a0176ffa75f2b5a4c024.bindPopup(popup_6e9af232b7b317a3f19df0ec294a0e67)
+        ;
+
+        
+    
+    
+                marker_31f40fcd8522a0176ffa75f2b5a4c024.setIcon(icon_788df03323a8ea49cbb3c0d09851b252);
+            
+    
+            var marker_67fa04bcdb22ebf5e7a7aa82dc482c06 = L.marker(
+                [13.6851453, 79.3447582],
+                {
+}
+            ).addTo(marker_cluster_435c500789d89010616199832e348a4b);
+        
+    
+            var icon_8a7674d08b02f234e71ad815abc03d2e = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_d92857b6244b6df8da8518d6a92a79bd = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_3042cf26e30f2174498f5ced448be983 = $(`<div id="html_3042cf26e30f2174498f5ced448be983" style="width: 100.0%; height: 100.0%;">         <div>             <b>Ahobila Math</b><br>             Tirumala<br>             <a href="#" onclick="showDetails('Ahobila Math'); return false;">Details</a>         </div>         </div>`)[0];
+                popup_d92857b6244b6df8da8518d6a92a79bd.setContent(html_3042cf26e30f2174498f5ced448be983);
+            
+        
+
+        marker_67fa04bcdb22ebf5e7a7aa82dc482c06.bindPopup(popup_d92857b6244b6df8da8518d6a92a79bd)
+        ;
+
+        
+    
+    
+                marker_67fa04bcdb22ebf5e7a7aa82dc482c06.setIcon(icon_8a7674d08b02f234e71ad815abc03d2e);
+            
+    
+            var marker_a5725fd1c1f7290687ffdca37d03f201 = L.marker(
+                [13.6861557, 79.3446857],
+                {
+}
+            ).addTo(marker_cluster_435c500789d89010616199832e348a4b);
+        
+    
+            var icon_9cb0c2de7b6ba7432f24ffdfb06aac2c = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_7d7d86dca219b4bed5fbfb6ef16a807b = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_4ad07a2d3556c4ff1558e4cf1c4a1135 = $(`<div id="html_4ad07a2d3556c4ff1558e4cf1c4a1135" style="width: 100.0%; height: 100.0%;">         <div>             <b>Raghavendra Swamy Math</b><br>             Tirumala<br>             <a href="#" onclick="showDetails('Raghavendra Swamy Math'); return false;">Details</a>         </div>         </div>`)[0];
+                popup_7d7d86dca219b4bed5fbfb6ef16a807b.setContent(html_4ad07a2d3556c4ff1558e4cf1c4a1135);
+            
+        
+
+        marker_a5725fd1c1f7290687ffdca37d03f201.bindPopup(popup_7d7d86dca219b4bed5fbfb6ef16a807b)
+        ;
+
+        
+    
+    
+                marker_a5725fd1c1f7290687ffdca37d03f201.setIcon(icon_9cb0c2de7b6ba7432f24ffdfb06aac2c);
+            
+    
+            var marker_b9fab02fef2f0cd60eb46447cacf837b = L.marker(
+                [13.6860791, 79.3451226],
+                {
+}
+            ).addTo(marker_cluster_435c500789d89010616199832e348a4b);
+        
+    
+            var icon_d6e4de1adf43fd32286cc4c7b98e63e7 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_76a3b28403dc56d11925f6b1be1b7f19 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_19b433eb78d97e978c0486b97221cc84 = $(`<div id="html_19b433eb78d97e978c0486b97221cc84" style="width: 100.0%; height: 100.0%;">         <div>             <b>Chitoor Math</b><br>             Tirumala<br>             <a href="#" onclick="showDetails('Chitoor Math'); return false;">Details</a>         </div>         </div>`)[0];
+                popup_76a3b28403dc56d11925f6b1be1b7f19.setContent(html_19b433eb78d97e978c0486b97221cc84);
+            
+        
+
+        marker_b9fab02fef2f0cd60eb46447cacf837b.bindPopup(popup_76a3b28403dc56d11925f6b1be1b7f19)
+        ;
+
+        
+    
+    
+                marker_b9fab02fef2f0cd60eb46447cacf837b.setIcon(icon_d6e4de1adf43fd32286cc4c7b98e63e7);
+            
+    
+            var marker_8573064c1f2ac861ee4d7e3be0072005 = L.marker(
+                [13.6863067, 79.3444033],
+                {
+}
+            ).addTo(marker_cluster_435c500789d89010616199832e348a4b);
+        
+    
+            var icon_f30a6854c6c9b72dfabda041b06b865a = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_05f7c480f388f7b428b887fed8261c20 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_c65ffc327d18141e6a1197aeac279d93 = $(`<div id="html_c65ffc327d18141e6a1197aeac279d93" style="width: 100.0%; height: 100.0%;">         <div>             <b>Vallabhacharya Math</b><br>             Tirumala<br>             <a href="#" onclick="showDetails('Vallabhacharya Math'); return false;">Details</a>         </div>         </div>`)[0];
+                popup_05f7c480f388f7b428b887fed8261c20.setContent(html_c65ffc327d18141e6a1197aeac279d93);
+            
+        
+
+        marker_8573064c1f2ac861ee4d7e3be0072005.bindPopup(popup_05f7c480f388f7b428b887fed8261c20)
+        ;
+
+        
+    
+    
+                marker_8573064c1f2ac861ee4d7e3be0072005.setIcon(icon_f30a6854c6c9b72dfabda041b06b865a);
+            
+    
+            var marker_5a815fb8e4bc6ef80327ff91cb462f39 = L.marker(
+                [13.6854528, 79.344798],
+                {
+}
+            ).addTo(marker_cluster_435c500789d89010616199832e348a4b);
+        
+    
+            var icon_ad18547cdbfa35d2c6dbfdc4a00736b2 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_3805265984e8dffd12c57dbdfeda499c = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_29f495f73fab354d03a62e74481470e0 = $(`<div id="html_29f495f73fab354d03a62e74481470e0" style="width: 100.0%; height: 100.0%;">         <div>             <b>Parakala Math</b><br>             Tirumala<br>             <a href="#" onclick="showDetails('Parakala Math'); return false;">Details</a>         </div>         </div>`)[0];
+                popup_3805265984e8dffd12c57dbdfeda499c.setContent(html_29f495f73fab354d03a62e74481470e0);
+            
+        
+
+        marker_5a815fb8e4bc6ef80327ff91cb462f39.bindPopup(popup_3805265984e8dffd12c57dbdfeda499c)
+        ;
+
+        
+    
+    
+                marker_5a815fb8e4bc6ef80327ff91cb462f39.setIcon(icon_ad18547cdbfa35d2c6dbfdc4a00736b2);
+            
+    
+            var marker_bcf9a1ec995db96458f613bf7f5407db = L.marker(
+                [13.685597, 79.3448074],
+                {
+}
+            ).addTo(marker_cluster_435c500789d89010616199832e348a4b);
+        
+    
+            var icon_c2fe66d125d6e504385fda73dc8b5cb7 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_5bcc735d4f376ea269e5ae7430014fc7 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_2f75d98b5d03869ce6b9f22df9df13a3 = $(`<div id="html_2f75d98b5d03869ce6b9f22df9df13a3" style="width: 100.0%; height: 100.0%;">         <div>             <b>Vikhanasa Math</b><br>             Tirumala<br>             <a href="#" onclick="showDetails('Vikhanasa Math'); return false;">Details</a>         </div>         </div>`)[0];
+                popup_5bcc735d4f376ea269e5ae7430014fc7.setContent(html_2f75d98b5d03869ce6b9f22df9df13a3);
+            
+        
+
+        marker_bcf9a1ec995db96458f613bf7f5407db.bindPopup(popup_5bcc735d4f376ea269e5ae7430014fc7)
+        ;
+
+        
+    
+    
+                marker_bcf9a1ec995db96458f613bf7f5407db.setIcon(icon_c2fe66d125d6e504385fda73dc8b5cb7);
+            
+    
+            var marker_4c475a55e6af60751ed41bd6bb92df69 = L.marker(
+                [13.6855439, 79.3451738],
+                {
+}
+            ).addTo(marker_cluster_435c500789d89010616199832e348a4b);
+        
+    
+            var icon_76369d8c382fd00a1c285b9190731c7a = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_b43e2324987620f69b9bb6d85ff9b35e = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_450b272e77444e382ef7c6975dbb5b3f = $(`<div id="html_450b272e77444e382ef7c6975dbb5b3f" style="width: 100.0%; height: 100.0%;">         <div>             <b>Andavan Math</b><br>             Tirumala<br>             <a href="#" onclick="showDetails('Andavan Math'); return false;">Details</a>         </div>         </div>`)[0];
+                popup_b43e2324987620f69b9bb6d85ff9b35e.setContent(html_450b272e77444e382ef7c6975dbb5b3f);
+            
+        
+
+        marker_4c475a55e6af60751ed41bd6bb92df69.bindPopup(popup_b43e2324987620f69b9bb6d85ff9b35e)
+        ;
+
+        
+    
+    
+                marker_4c475a55e6af60751ed41bd6bb92df69.setIcon(icon_76369d8c382fd00a1c285b9190731c7a);
+            
+    
+            var marker_f95dacb0d7bc3ecd5554d8cd1bc8d1f1 = L.marker(
+                [13.6861272, 79.3457822],
+                {
+}
+            ).addTo(marker_cluster_435c500789d89010616199832e348a4b);
+        
+    
+            var icon_8ea09ee7b97d634c301775e5a863677c = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_5c7377dcc696c887b460e74bd8946a03 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_93426809a3b4105ed34112a1ce9e377e = $(`<div id="html_93426809a3b4105ed34112a1ce9e377e" style="width: 100.0%; height: 100.0%;">         <div>             <b>Vasavi Bhavan</b><br>             Tirumala<br>             <a href="#" onclick="showDetails('Vasavi Bhavan'); return false;">Details</a>         </div>         </div>`)[0];
+                popup_5c7377dcc696c887b460e74bd8946a03.setContent(html_93426809a3b4105ed34112a1ce9e377e);
+            
+        
+
+        marker_f95dacb0d7bc3ecd5554d8cd1bc8d1f1.bindPopup(popup_5c7377dcc696c887b460e74bd8946a03)
+        ;
+
+        
+    
+    
+                marker_f95dacb0d7bc3ecd5554d8cd1bc8d1f1.setIcon(icon_8ea09ee7b97d634c301775e5a863677c);
+            
+    
+            var marker_5bf1cd01e1befd22a51d632f7869e39d = L.marker(
+                [13.6858585, 79.3462149],
+                {
+}
+            ).addTo(marker_cluster_435c500789d89010616199832e348a4b);
+        
+    
+            var icon_003febdc72e56c58c45eb3f1d94a596e = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_c37689c8dba5c4e83007583e2b4eb6eb = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_a645e4548075772e3fff5f667363a7f5 = $(`<div id="html_a645e4548075772e3fff5f667363a7f5" style="width: 100.0%; height: 100.0%;">         <div>             <b>Uttaradi Math</b><br>             Tirumala<br>             <a href="#" onclick="showDetails('Uttaradi Math'); return false;">Details</a>         </div>         </div>`)[0];
+                popup_c37689c8dba5c4e83007583e2b4eb6eb.setContent(html_a645e4548075772e3fff5f667363a7f5);
+            
+        
+
+        marker_5bf1cd01e1befd22a51d632f7869e39d.bindPopup(popup_c37689c8dba5c4e83007583e2b4eb6eb)
+        ;
+
+        
+    
+    
+                marker_5bf1cd01e1befd22a51d632f7869e39d.setIcon(icon_003febdc72e56c58c45eb3f1d94a596e);
+            
+    
+            var marker_3c057fd8ecd3426e6acfd5ce392454b5 = L.marker(
+                [13.6867748, 79.3456708],
+                {
+}
+            ).addTo(marker_cluster_435c500789d89010616199832e348a4b);
+        
+    
+            var icon_22f21dcb37dc093202369c59e022f26e = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_776498eee6f4d6117d153d5f4f866a80 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_c800d4a6f42ba2f2127330394052bf91 = $(`<div id="html_c800d4a6f42ba2f2127330394052bf91" style="width: 100.0%; height: 100.0%;">         <div>             <b>Pushpagiri Math</b><br>             Tirumala<br>             <a href="#" onclick="showDetails('Pushpagiri Math'); return false;">Details</a>         </div>         </div>`)[0];
+                popup_776498eee6f4d6117d153d5f4f866a80.setContent(html_c800d4a6f42ba2f2127330394052bf91);
+            
+        
+
+        marker_3c057fd8ecd3426e6acfd5ce392454b5.bindPopup(popup_776498eee6f4d6117d153d5f4f866a80)
+        ;
+
+        
+    
+    
+                marker_3c057fd8ecd3426e6acfd5ce392454b5.setIcon(icon_22f21dcb37dc093202369c59e022f26e);
+            
+    
+            var marker_f1fcf9a70e04f4cd9d7637b4ec3a3201 = L.marker(
+                [13.6824702, 79.3483984],
+                {
+}
+            ).addTo(marker_cluster_435c500789d89010616199832e348a4b);
+        
+    
+            var icon_2b0b29b7b8cdf11c9e644de3e5fef4a7 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_32c4c34f592f732bbd9f4aa1de406cf4 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_1ca77f5d57ca9e1f20f3983d46aac871 = $(`<div id="html_1ca77f5d57ca9e1f20f3983d46aac871" style="width: 100.0%; height: 100.0%;">         <div>             <b>Hathiramji Math</b><br>             Tirumala<br>             <a href="#" onclick="showDetails('Hathiramji Math'); return false;">Details</a>         </div>         </div>`)[0];
+                popup_32c4c34f592f732bbd9f4aa1de406cf4.setContent(html_1ca77f5d57ca9e1f20f3983d46aac871);
+            
+        
+
+        marker_f1fcf9a70e04f4cd9d7637b4ec3a3201.bindPopup(popup_32c4c34f592f732bbd9f4aa1de406cf4)
+        ;
+
+        
+    
+    
+                marker_f1fcf9a70e04f4cd9d7637b4ec3a3201.setIcon(icon_2b0b29b7b8cdf11c9e644de3e5fef4a7);
+            
+    
+            var marker_fddc7c50146d493545b134f31407b824 = L.marker(
+                [13.6298256, 79.4176595],
+                {
+}
+            ).addTo(marker_cluster_435c500789d89010616199832e348a4b);
+        
+    
+            var icon_a1954bb789767721ea519373ad3191c7 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_8a47fd75fbb372316e9413872ee959f0 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_ab58421d64fdd755cba9cfcd49347935 = $(`<div id="html_ab58421d64fdd755cba9cfcd49347935" style="width: 100.0%; height: 100.0%;">         <div>             <b>Govindarajaswamy Temple</b><br>             Tirupati<br>             <a href="#" onclick="showDetails('Govindarajaswamy Temple'); return false;">Details</a>         </div>         </div>`)[0];
+                popup_8a47fd75fbb372316e9413872ee959f0.setContent(html_ab58421d64fdd755cba9cfcd49347935);
+            
+        
+
+        marker_fddc7c50146d493545b134f31407b824.bindPopup(popup_8a47fd75fbb372316e9413872ee959f0)
+        ;
+
+        
+    
+    
+                marker_fddc7c50146d493545b134f31407b824.setIcon(icon_a1954bb789767721ea519373ad3191c7);
+            
+    
+            var marker_170d2badfca6e97cf3a389402989320d = L.marker(
+                [13.7495616, 79.6992532],
+                {
+}
+            ).addTo(marker_cluster_435c500789d89010616199832e348a4b);
+        
+    
+            var icon_346237470803552a185c180ace34c167 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_188ff34e49ddf4ef596f96aed8d31167 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_b4a19d040b1bef819001d3ae8c905cef = $(`<div id="html_b4a19d040b1bef819001d3ae8c905cef" style="width: 100.0%; height: 100.0%;">         <div>             <b>Bhakta Kannappa Temple</b><br>             Sri Kalahasti<br>             <a href="#" onclick="showDetails('Bhakta Kannappa Temple'); return false;">Details</a>         </div>         </div>`)[0];
+                popup_188ff34e49ddf4ef596f96aed8d31167.setContent(html_b4a19d040b1bef819001d3ae8c905cef);
+            
+        
+
+        marker_170d2badfca6e97cf3a389402989320d.bindPopup(popup_188ff34e49ddf4ef596f96aed8d31167)
+        ;
+
+        
+    
+    
+                marker_170d2badfca6e97cf3a389402989320d.setIcon(icon_346237470803552a185c180ace34c167);
+            
+    
+            var marker_3a3810bd068bfe26732edf182b632d09 = L.marker(
+                [13.7543685, 79.7008026],
+                {
+}
+            ).addTo(marker_cluster_435c500789d89010616199832e348a4b);
+        
+    
+            var icon_0b94a26f047798c02de8fdc65d103b7c = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_c3b07b77d9b6a9b3d9350c5ae0fcde16 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_6ee000f36eef77f87ab567ba2d2295d3 = $(`<div id="html_6ee000f36eef77f87ab567ba2d2295d3" style="width: 100.0%; height: 100.0%;">         <div>             <b>Durgamma Temple</b><br>             Sri Kalahasti<br>             <a href="#" onclick="showDetails('Durgamma Temple'); return false;">Details</a>         </div>         </div>`)[0];
+                popup_c3b07b77d9b6a9b3d9350c5ae0fcde16.setContent(html_6ee000f36eef77f87ab567ba2d2295d3);
+            
+        
+
+        marker_3a3810bd068bfe26732edf182b632d09.bindPopup(popup_c3b07b77d9b6a9b3d9350c5ae0fcde16)
+        ;
+
+        
+    
+    
+                marker_3a3810bd068bfe26732edf182b632d09.setIcon(icon_0b94a26f047798c02de8fdc65d103b7c);
+            
+    
+            var marker_0d5ccc2c92ee1d61fd62aad31d20c2aa = L.marker(
+                [13.6514474, 79.5425981],
+                {
+}
+            ).addTo(marker_cluster_435c500789d89010616199832e348a4b);
+        
+    
+            var icon_353698fa415940111115764b983aa040 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_50ea1a4459d3f29447356c9bf0dbb8fb = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_d09ca7383d6f18cde34d61ca4dc17af7 = $(`<div id="html_d09ca7383d6f18cde34d61ca4dc17af7" style="width: 100.0%; height: 100.0%;">         <div>             <b>Anjaneya Swamy Temple</b><br>             Raghavapuram Naidu Indlu<br>             <a href="#" onclick="showDetails('Anjaneya Swamy Temple'); return false;">Details</a>         </div>         </div>`)[0];
+                popup_50ea1a4459d3f29447356c9bf0dbb8fb.setContent(html_d09ca7383d6f18cde34d61ca4dc17af7);
+            
+        
+
+        marker_0d5ccc2c92ee1d61fd62aad31d20c2aa.bindPopup(popup_50ea1a4459d3f29447356c9bf0dbb8fb)
+        ;
+
+        
+    
+    
+                marker_0d5ccc2c92ee1d61fd62aad31d20c2aa.setIcon(icon_353698fa415940111115764b983aa040);
+            
+    
+            var marker_bbb8949d8ab6854aeb34f71cf1119c55 = L.marker(
+                [13.6351006, 79.4168597],
+                {
+}
+            ).addTo(marker_cluster_435c500789d89010616199832e348a4b);
+        
+    
+            var icon_9274342184e051b92935b903fa354fa1 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_73ef60e58d28e3758f01e3c13fd2c7bf = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_5e66405b400c56361671bba40d8bf133 = $(`<div id="html_5e66405b400c56361671bba40d8bf133" style="width: 100.0%; height: 100.0%;">         <div>             <b>Sri Kodanda Rama Swamy Temple</b><br>             Tirupati<br>             <a href="#" onclick="showDetails('Sri Kodanda Rama Swamy Temple'); return false;">Details</a>         </div>         </div>`)[0];
+                popup_73ef60e58d28e3758f01e3c13fd2c7bf.setContent(html_5e66405b400c56361671bba40d8bf133);
+            
+        
+
+        marker_bbb8949d8ab6854aeb34f71cf1119c55.bindPopup(popup_73ef60e58d28e3758f01e3c13fd2c7bf)
+        ;
+
+        
+    
+    
+                marker_bbb8949d8ab6854aeb34f71cf1119c55.setIcon(icon_9274342184e051b92935b903fa354fa1);
+            
+    
+            var marker_1c777f629c71db3b9ca06e911c7c5d21 = L.marker(
+                [13.6297633, 79.420088],
+                {
+}
+            ).addTo(marker_cluster_435c500789d89010616199832e348a4b);
+        
+    
+            var icon_5bbffcd357b068a4fb4b6084dbb44b2d = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_285ee2a10c5fd124352110613e138ffe = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_180f1ca50adb4d1ef29a462e994b2f1a = $(`<div id="html_180f1ca50adb4d1ef29a462e994b2f1a" style="width: 100.0%; height: 100.0%;">         <div>             <b>Sri Vinayaka Swamy Temple</b><br>             Tirupati<br>             <a href="#" onclick="showDetails('Sri Vinayaka Swamy Temple'); return false;">Details</a>         </div>         </div>`)[0];
+                popup_285ee2a10c5fd124352110613e138ffe.setContent(html_180f1ca50adb4d1ef29a462e994b2f1a);
+            
+        
+
+        marker_1c777f629c71db3b9ca06e911c7c5d21.bindPopup(popup_285ee2a10c5fd124352110613e138ffe)
+        ;
+
+        
+    
+    
+                marker_1c777f629c71db3b9ca06e911c7c5d21.setIcon(icon_5bbffcd357b068a4fb4b6084dbb44b2d);
+            
+    
+            var marker_ba19675bb260145b5f6e894493589020 = L.marker(
+                [13.4535663, 79.1576829],
+                {
+}
+            ).addTo(marker_cluster_435c500789d89010616199832e348a4b);
+        
+    
+            var icon_7d71381871771233f76e16e888652cc5 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_a87530bf1acc37bad0467cd574f7baf1 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_2b3cb830c6b0562ae82cd329447d0fb2 = $(`<div id="html_2b3cb830c6b0562ae82cd329447d0fb2" style="width: 100.0%; height: 100.0%;">         <div>             <b>Sri Venkateshwara Swamy Temple</b><br>             Nendragunta<br>             <a href="#" onclick="showDetails('Sri Venkateshwara Swamy Temple'); return false;">Details</a>         </div>         </div>`)[0];
+                popup_a87530bf1acc37bad0467cd574f7baf1.setContent(html_2b3cb830c6b0562ae82cd329447d0fb2);
+            
+        
+
+        marker_ba19675bb260145b5f6e894493589020.bindPopup(popup_a87530bf1acc37bad0467cd574f7baf1)
+        ;
+
+        
+    
+    
+                marker_ba19675bb260145b5f6e894493589020.setIcon(icon_7d71381871771233f76e16e888652cc5);
+            
+    
+            var marker_a068376bd7c6de6e9cd9a0a0c0cc11d7 = L.marker(
+                [13.6425685, 79.4190879],
+                {
+}
+            ).addTo(marker_cluster_435c500789d89010616199832e348a4b);
+        
+    
+            var icon_b625a6d862689b3449cdd3ee8ba674b2 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_694201a784bdfa189d7383a2c7f67232 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_d793fabb537105a5a26280bc402cda03 = $(`<div id="html_d793fabb537105a5a26280bc402cda03" style="width: 100.0%; height: 100.0%;">         <div>             <b>Vardaraja Swamy Temple</b><br>             Tirupati<br>             <a href="#" onclick="showDetails('Vardaraja Swamy Temple'); return false;">Details</a>         </div>         </div>`)[0];
+                popup_694201a784bdfa189d7383a2c7f67232.setContent(html_d793fabb537105a5a26280bc402cda03);
+            
+        
+
+        marker_a068376bd7c6de6e9cd9a0a0c0cc11d7.bindPopup(popup_694201a784bdfa189d7383a2c7f67232)
+        ;
+
+        
+    
+    
+                marker_a068376bd7c6de6e9cd9a0a0c0cc11d7.setIcon(icon_b625a6d862689b3449cdd3ee8ba674b2);
+            
+    
+            var marker_bd077f9e379bbe080be4d39d6fc92fed = L.marker(
+                [13.6554248, 79.4208123],
+                {
+}
+            ).addTo(marker_cluster_435c500789d89010616199832e348a4b);
+        
+    
+            var icon_558b5e8f062f748fad0c4cdca19247be = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_c67bd70ac88197d00b663b11d0e90cb4 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_a55b92dac071622f198dc80e6a8fd48c = $(`<div id="html_a55b92dac071622f198dc80e6a8fd48c" style="width: 100.0%; height: 100.0%;">         <div>             <b>Kapila Theertham</b><br>             Tirupati<br>             <a href="#" onclick="showDetails('Kapila Theertham'); return false;">Details</a>         </div>         </div>`)[0];
+                popup_c67bd70ac88197d00b663b11d0e90cb4.setContent(html_a55b92dac071622f198dc80e6a8fd48c);
+            
+        
+
+        marker_bd077f9e379bbe080be4d39d6fc92fed.bindPopup(popup_c67bd70ac88197d00b663b11d0e90cb4)
+        ;
+
+        
+    
+    
+                marker_bd077f9e379bbe080be4d39d6fc92fed.setIcon(icon_558b5e8f062f748fad0c4cdca19247be);
+            
+    
+            var marker_84d7d849df332311b2ed8a2d0681af40 = L.marker(
+                [13.6907154, 79.7069958],
+                {
+}
+            ).addTo(marker_cluster_435c500789d89010616199832e348a4b);
+        
+    
+            var icon_f11e44fa2bb14ea71231ff6cc6e894bb = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_814357bd295a452a8a9747facef978c8 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_e59ff4767ec9209c8bdbd7129fe0a24b = $(`<div id="html_e59ff4767ec9209c8bdbd7129fe0a24b" style="width: 100.0%; height: 100.0%;">         <div>             <b>Sahashra Lingeswara Swamy Temple</b><br>             Vedam<br>             <a href="#" onclick="showDetails('Sahashra Lingeswara Swamy Temple'); return false;">Details</a>         </div>         </div>`)[0];
+                popup_814357bd295a452a8a9747facef978c8.setContent(html_e59ff4767ec9209c8bdbd7129fe0a24b);
+            
+        
+
+        marker_84d7d849df332311b2ed8a2d0681af40.bindPopup(popup_814357bd295a452a8a9747facef978c8)
+        ;
+
+        
+    
+    
+                marker_84d7d849df332311b2ed8a2d0681af40.setIcon(icon_f11e44fa2bb14ea71231ff6cc6e894bb);
+            
+    
+            var marker_cfaf24c5c73d70c0dfa7181ae6458bd3 = L.marker(
+                [13.7574421, 79.7069876],
+                {
+}
+            ).addTo(marker_cluster_435c500789d89010616199832e348a4b);
+        
+    
+            var icon_f001c108923b0353c383a04dbbe5d438 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_94637302df6e6ca2f43f07f5e51b5ea5 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_3925fca2bf9d879ec809f16ff3a8610b = $(`<div id="html_3925fca2bf9d879ec809f16ff3a8610b" style="width: 100.0%; height: 100.0%;">         <div>             <b>Sri Lakshmi Ganapathi Swammy Temple</b><br>             Sri Kalahasti<br>             <a href="#" onclick="showDetails('Sri Lakshmi Ganapathi Swammy Temple'); return false;">Details</a>         </div>         </div>`)[0];
+                popup_94637302df6e6ca2f43f07f5e51b5ea5.setContent(html_3925fca2bf9d879ec809f16ff3a8610b);
+            
+        
+
+        marker_cfaf24c5c73d70c0dfa7181ae6458bd3.bindPopup(popup_94637302df6e6ca2f43f07f5e51b5ea5)
+        ;
+
+        
+    
+    
+                marker_cfaf24c5c73d70c0dfa7181ae6458bd3.setIcon(icon_f001c108923b0353c383a04dbbe5d438);
+            
+    
+            var marker_49eb212e1e3c31e447a29b85714e4533 = L.marker(
+                [13.7564023, 79.706729],
+                {
+}
+            ).addTo(marker_cluster_435c500789d89010616199832e348a4b);
+        
+    
+            var icon_9bd1856c1707055a6ff83e4c88e0e6cd = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_67afae00781acac3e8743ac3389328f8 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_b78fb3421f527dd1544959a821500f7f = $(`<div id="html_b78fb3421f527dd1544959a821500f7f" style="width: 100.0%; height: 100.0%;">         <div>             <b>Sri Ramula Vari Temple</b><br>             Sri Kalahasti<br>             <a href="#" onclick="showDetails('Sri Ramula Vari Temple'); return false;">Details</a>         </div>         </div>`)[0];
+                popup_67afae00781acac3e8743ac3389328f8.setContent(html_b78fb3421f527dd1544959a821500f7f);
+            
+        
+
+        marker_49eb212e1e3c31e447a29b85714e4533.bindPopup(popup_67afae00781acac3e8743ac3389328f8)
+        ;
+
+        
+    
+    
+                marker_49eb212e1e3c31e447a29b85714e4533.setIcon(icon_9bd1856c1707055a6ff83e4c88e0e6cd);
+            
+    
+            var marker_d51b580dee9ff16f0368ace11a0a93e7 = L.marker(
+                [13.6791391, 79.3332168],
+                {
+}
+            ).addTo(marker_cluster_435c500789d89010616199832e348a4b);
+        
+    
+            var icon_ec0e9459c171e153c90e45c3ed116b94 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_55ceed3e974548b826e6906c31dfc11a = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_87cbe96e82f77ab93b1396687c111a15 = $(`<div id="html_87cbe96e82f77ab93b1396687c111a15" style="width: 100.0%; height: 100.0%;">         <div>             <b>Srivari Padalu</b><br>             Tirumala<br>             <a href="#" onclick="showDetails('Srivari Padalu'); return false;">Details</a>         </div>         </div>`)[0];
+                popup_55ceed3e974548b826e6906c31dfc11a.setContent(html_87cbe96e82f77ab93b1396687c111a15);
+            
+        
+
+        marker_d51b580dee9ff16f0368ace11a0a93e7.bindPopup(popup_55ceed3e974548b826e6906c31dfc11a)
+        ;
+
+        
+    
+    
+                marker_d51b580dee9ff16f0368ace11a0a93e7.setIcon(icon_ec0e9459c171e153c90e45c3ed116b94);
+            
+    
+            var marker_0592c8f83e258a66bbd4bb1d66e0812c = L.marker(
+                [13.751275, 79.6992335],
+                {
+}
+            ).addTo(marker_cluster_435c500789d89010616199832e348a4b);
+        
+    
+            var icon_7e7873011a4bbc20b74884dbca64c131 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_dc06fe52083790ace1d3d3821a61209e = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_7b94fbda26350638aeb69473465767b7 = $(`<div id="html_7b94fbda26350638aeb69473465767b7" style="width: 100.0%; height: 100.0%;">         <div>             <b>Srikalahasti Temple</b><br>             Sri Kalahasti<br>             <a href="#" onclick="showDetails('Srikalahasti Temple'); return false;">Details</a>         </div>         </div>`)[0];
+                popup_dc06fe52083790ace1d3d3821a61209e.setContent(html_7b94fbda26350638aeb69473465767b7);
+            
+        
+
+        marker_0592c8f83e258a66bbd4bb1d66e0812c.bindPopup(popup_dc06fe52083790ace1d3d3821a61209e)
+        ;
+
+        
+    
+    
+                marker_0592c8f83e258a66bbd4bb1d66e0812c.setIcon(icon_7e7873011a4bbc20b74884dbca64c131);
+            
+    
+            marker_cluster_435c500789d89010616199832e348a4b.addTo(map_8e4ab7573660126030961b4a59332777);
+        
+</script>
+</html>
